@@ -1,36 +1,41 @@
 ---
 layout: default
-title: "The high quality, completely customizable, performant and 100% free blog template for Jekyll"
-description: "Chalk uses all the best tools and merges them into one premium blogging theme."
+title: "home"
+description: "Write-ups for CTFS, THM and HTB."
 ---
 
+<ul class="header-tags scrollappear">
+  <li><a href="/tag/web">Web123</a></li>
+
+  <li><a href="/tag/forensics">Forensics</a></li>
+
+  <li><a href="/tag/hackthebox">Hackthebox</a></li>
+
+  <li><a href="/tag/programming">Programming</a></li>
+
+  <li><a href="/tag/sorcery">Sorcery</a></li>
+
+  <li><a href="/tag/tryhackme">Tryhackme</a></li>
+</ul>
 <ul class="article-list">
   {% for post in paginator.posts %}
-    <li class="article-list-item {% if site.scrollappear_enabled %}scrollappear{% endif %}">
-      <a href="{{ post.url | relative_url }}" title="{{ post.title }}">
-        <h5>
-          {{ post.title }}
-          {% include svg-icon.html icon="arrow-right" %}
-        </h5>
-      </a>
-      <p>
-        {% if post.description %}
-          {{ post.description }}  
-        {% else %}
-          {{ post.excerpt }}
-        {% endif %}
-      </p>
-      {% include article/info-footer.html post=post %}
-    </li>
-  {% endfor %}
-  {% if paginator.total_pages > 1 %}
-    <li class="article-pagination {% if site.settings.scrollappear_enabled %}scrollappear{% endif %}">
-      {% if paginator.next_page %}
-        <a href="{{ paginator.next_page_path }}" class="article-pagination-left">{% include svg-icon.html icon="arrow-left" %} Older posts</a>
+  <li class="article-list-item {% if site.scrollappear_enabled %}scrollappear{% endif %}">
+    <a href="{{ post.url | relative_url }}" title="{{ post.title }}"> <h5>{{ post.title }} {% include svg-icon.html icon="arrow-right" %}</h5> </a><br />
+    <a href="{{ post.url | relative_url }}" title="{{ post.title }}">
+      {% if post.thumb_image %}
+      <img src="{% asset '{{ post.thumb_image }}' @path %}" alt="{{ post.title }} thumbnail" />
       {% endif %}
-      {% if paginator.previous_page %}
-        <a href="{{ paginator.previous_page_path }}" class="article-pagination-right">Newer posts {% include svg-icon.html icon="arrow-right" %}</a>
-      {% endif %}
-    </li>
+    </a>
+    <p>{% if post.description %} {{ post.description }} {% else %} {{ post.excerpt }} {% endif %}</p>
+    {% include article/info-footer.html post=post %}
+  </li>
+  {% endfor %} {% if paginator.total_pages > 1 %}
+  <li class="article-pagination {% if site.settings.scrollappear_enabled %}scrollappear{% endif %}">
+    {% if paginator.next_page %}
+    <a href="{{ paginator.next_page_path }}" class="article-pagination-left">{% include svg-icon.html icon="arrow-left" %} Older posts</a>
+    {% endif %} {% if paginator.previous_page %}
+    <a href="{{ paginator.previous_page_path }}" class="article-pagination-right">Newer posts {% include svg-icon.html icon="arrow-right" %}</a>
+    {% endif %}
+  </li>
   {% endif %}
 </ul>

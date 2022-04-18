@@ -56,7 +56,9 @@
       display: inline-block;
       color: $header-link-color;
       text-decoration: none;
-      &:hover { color: $header-link-color-hover; }
+      &:hover {
+        color: $header-link-color-hover;
+      }
     }
   }
 }
