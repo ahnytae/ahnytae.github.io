@@ -1,10 +1,8 @@
 # Mandatory settings
 
-blog_theme: light # Or use dark
+blog_theme: dark # Or use dark
 name: Chalk
-paginate: 25
 url: http://chalk.nielsenramon.com
-
 
 # Optional settings
 
@@ -40,13 +38,12 @@ social:
   stackoverflow: # Add your Stack Overflow ID number
   steam: # Add your Steam handle
 
-
 # Important settings (change at own risk)
 
 assets:
   plugins:
-    css: { autoprefixer: {}}
-    img: { optim: {}}
+    css: { autoprefixer: {} }
+    img: { optim: {} }
   source_maps: false
   sources:
     - _assets/icons
@@ -58,8 +55,7 @@ collections:
     output: true
     permalink: /tag/:slug/
 defaults:
-  -
-    scope:
+  - scope:
       path: ""
       type: my_tags
     values:
