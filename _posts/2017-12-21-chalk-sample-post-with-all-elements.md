@@ -14,7 +14,7 @@ Use the `highlight` tag to use the following code highlighting your preferred la
 <div class="grid">
   <h1>This is a heading</h1>
   <p>
-    This is a paragraph text.
+    테스트 글@@@
   </p>
 </div>
 {% endhighlight %}
