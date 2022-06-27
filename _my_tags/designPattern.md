@@ -1,0 +1,4 @@
+---
+slug: designPattern
+name: DesignPattern
+---
