@@ -1,4 +1,0 @@
----
-slug: designPattern
-name: DesignPattern
----

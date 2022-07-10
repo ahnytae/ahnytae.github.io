@@ -1,4 +1,0 @@
----
-slug: oop
-name: OOP
----
