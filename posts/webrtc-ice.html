@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <title>STONE | WebRTC 뽀개기 - ICE 편</title>
+  <meta name="description" content="ICE 프레임워크가 무엇이고 어떤 방식인지 정리 한 내용 입니다." />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta property="og:title" content="WebRTC 뽀개기 - ICE 편" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://fumenoid.github.io/posts/webrtc-ice" />
+  <meta property="og:description" content="ICE 프레임워크가 무엇이고 어떤 방식인지 정리 한 내용 입니다." />
+  <meta property="og:site_name" content="STONE" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:url" content="https://fumenoid.github.io/posts/webrtc-ice" />
+  <meta name="twitter:title" content="WebRTC 뽀개기 - ICE 편" />
+  <meta name="twitter:description" content="ICE 프레임워크가 무엇이고 어떤 방식인지 정리 한 내용 입니다." />
+
+   
+  <meta property="og:image" content="https://fumenoid.github.io/assets/documentation/webrtc-logo-2485cc3f59c86b67b64a49986ecc94e62c7324372337152bd03939746da81f29.png" />
+  <meta property="og:image:height" content="286" />
+  <meta property="og:image:width" content="507" />
+  <meta name="twitter:image" content="https://fumenoid.github.io/assets/documentation/webrtc-logo-2485cc3f59c86b67b64a49986ecc94e62c7324372337152bd03939746da81f29.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+   
+
+  <link href="https://fumenoid.github.io/feed.xml" type="application/rss+xml" rel="alternate" title="STONE Last 10 blog posts" />
+
+    
+  <link rel="icon" type="image/x-icon" href="/assets/favicon-light-a98c41efc5ed9fcc06ac664c9e2f7a9b3c3b2e0a52357d221fe382f6f4abc8fc.ico" />
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon-light-87d1f2a3a19b1500e5c1626a0492025ca5f7f97d24540dc5900288e92112925a.png" />
+  <link rel="stylesheet" type="text/css" title="light" id="light" href="/assets/light-bb1553a18d0f1ccfe1aabc010584c49b4277a88503216b78906ba719e30019c1.css" />
+  <link rel="stylesheet" type="text/css" title="dark" id="dark" href="/assets/dark-831218bc9e41aef39ee6a0bae4501195bccafcc13101ae2b9cd20493a6ec04c0.css" disabled="true" />
+   
+</head>
+
+  <body>
+    <main>
+      <div class="grid grid-centered">
+        <div class="grid-cell">
+          <nav class="header-nav scrollappear">
+  <a href="/" class="header-logo" title="STONE">STONE</a>
+  <ul class="header-links">
+    
+    
+    
+    
+    
+      <li>
+        <a href="https://github.com/ahnytae" rel="noreferrer noopener" target="_blank" title="GitHub">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-github">
+  <use href="/assets/github-094f81040819f34343ee6ffff0980f17e2807b08b595eaaf66ae3554934fd78d.svg#icon-github" xlink:href="/assets/github-094f81040819f34343ee6ffff0980f17e2807b08b595eaaf66ae3554934fd78d.svg#icon-github"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+    
+    
+    
+    
+    
+      <li>
+        <a href="https://www.linkedin.com/in/ahny" rel="noreferrer noopener" target="_blank" title="LinkedIn">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-linkedin">
+  <use href="/assets/linkedin-cdc5c107044324a3dfbea2e9ead15873f8dee304c37d73a046988956b706256e.svg#icon-linkedin" xlink:href="/assets/linkedin-cdc5c107044324a3dfbea2e9ead15873f8dee304c37d73a046988956b706256e.svg#icon-linkedin"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      <li>
+        <a href="mailto:h.t.ahn93@gmail.com" title="Email">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-email">
+  <use href="/assets/email-782473193bf750036fdb90e8daa075508a20509d01854c09f3237c144a3f0601.svg#icon-email" xlink:href="/assets/email-782473193bf750036fdb90e8daa075508a20509d01854c09f3237c144a3f0601.svg#icon-email"></use>
+</svg>
+
+        </a>
+      </li>
+    
+    
+    
+      <li>
+        <a onclick="toggle()" title="Toggle Theme">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon-theme">
+  <use href="/assets/theme-66869e0bf8dab34bae1c86bda400327b772e0be69e8dc28d3ede896e771320ed.svg#icon-theme" xlink:href="/assets/theme-66869e0bf8dab34bae1c86bda400327b772e0be69e8dc28d3ede896e771320ed.svg#icon-theme"></use>
+</svg>
+
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+
+  <ul class="header-tags scrollappear">
+    
+    
+      
+        <li><a href="/tag/webrtc">Webrtc</a></li>
+    
+  </ul>
+
+
+          <article class="article scrollappear">
+            <header class="article-header">
+              <h1>WebRTC 뽀개기 - ICE 편</h1>
+              <p>ICE 프레임워크가 무엇이고 어떤 방식인지 정리 한 내용 입니다.</p>
+              <div class="article-list-footer">
+  <span class="article-list-date">
+    July 9, 2022
+  </span>
+  <span class="article-list-divider">-</span>
+  <span class="article-list-minutes">
+    
+    
+      5 minute read
+    
+  </span>
+  <span class="article-list-divider">-</span>
+  <div class="article-list-tags">
+    
+      
+      <a href="/tag/webrtc" title="See all posts with tag 'WebRTC'">WebRTC</a>
+    
+  </div>
+</div>
+            </header>
+
+            <div class="article-content"><h2 id="목차">목차</h2>
+
+<ul>
+  <li>ICE 란?</li>
+  <li>ICE는 왜 필요 할까?
+    <ul>
+      <li>NAT Traversal</li>
+    </ul>
+  </li>
+  <li>ICE는 어떻게 동작 할까?
+    <ul>
+      <li>SDP</li>
+      <li>Trickle ICE</li>
+      <li>(간략하게) ICE 역사 알아보기</li>
+    </ul>
+  </li>
+  <li>정리</li>
+</ul>
+
+<hr />
+<p><br />
+<strong><em>본 포스팅은 문서와 여러 아티클을 참고해 주관적으로 정리 한 내용이므로 사실과 다를 수도 있습니다.
+만약 발견시 피드백 주시면 감사하겠습니다</em></strong>
+<br />
+<br /></p>
+<h2 id="1-ice-란">1. ICE 란?</h2>
+
+<h2 id="interactive-connectivity-establishment"><span style="color:orangered">I</span>nteractive <span style="color:orangered">C</span>onnectivity <span style="color:orangered">E</span>stablishment</h2>
+
+<p>두 peer 간 서로 통신을 할 수 있도록 최적의 경로를 찾아주는 프레임워크.</p>
+
+<p>“프레임워크” 라고 해서 일반적인 언어의 framework로 생각 했었으나<br />
+ICE에서 일어나는 전체적인 과정이 프레임워크 라고 한다.</p>
+
+<hr />
+<p><br /></p>
+<h2 id="2-ice는-왜-필요-할까">2. ICE는 왜 필요 할까?</h2>
+
+<p>두 peer 간 연결을 시도 할때 방화벽 문제 라던지, public IP가 없다던지 등 문제가 발생 했을때
+ICE 프레임워크를 이용해 연결을 할 수 있다.<br />
+-&gt; (사실 요즘은 사설(내부) IP를 사용하기 때문에 ICE는 필수 사용이 되었다.)<br />
+-&gt; (STUN / TURN을 사용하는 과정도 ICE 동작에 포함됨)</p>
+
+<h3 id="nat-traversal">NAT Traversal</h3>
+
+ 	방화벽 문제, NAT 보안정책 등 연결 시도에 막혔을때 우회해서 연결할 방법을 찾아주는 과정.
+
+<p><img src="https://mdn.mozillademos.org/files/6117/webrtc-turn.png" alt="STUN, TURN" /></p>
+
+<p>​	가정용 개인 PC를 예로 들자면 기본적으로 Public IP를 ISP(인터넷 서비스 공급자)에서 할당 받아
+​	공유기를 사용해 내부 사설 IP로 변환해 사용 하고 있을 것이다.
+​	기본적으로 사설 IP를 사용하고 있는 장비에서는 자신의 Public IP를 모르기 때문에,
+​	STUN서버를 이용해 response로 Public IP, Port를 받고, 원격 peer에게 연결 할 준비를 한다.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;STUN 흐름도&gt;
+You                        NAT                     STUN server          
+|------ STUN request -----&gt;|                          |                   
+|   src:198.145.1.2:3000   |                          |                   
+|                          |------ STUN request -----&gt;|                   
+|                          |   src:128.11.22.13:8888  |                   
+|                          |                          |                   
+|                          |&lt;------STUN response------|                   
+|                          |   ext:128.11.22.13:8888  |                   
+|&lt;------STUN response------|                          |                   
+|   ext:128.11.12.13:8888  |                          |
+</code></pre></div></div>
+
+<p>​	
+​	하지만 NAT 정책상 문제로 자신의 주소 찾기에 실패 할 경우<br />
+​	<em>(ex: symmetric NAT의 경우 port를 동적으로 할당해 STUN은 찾을 수 없다.)</em><br />
+​	TURN 서버를 대안으로 사용 할 수 있다.</p>
+
+<p>​	TURN 서버는 미디어들을 중계 해주는 역할로,
+​	모든 미디어 트래픽은 TURN을 거쳐 각 peer에게 전송 된다.
+​	(사실 TURN을 사용하게 되면 webRTC에 장점인 p2p 방식이 아니게되고,
+​	그만큼의 서버 유지 비용이 늘어나게 되지만 어쩔수 없는 최후의 방법 이다.)</p>
+
+<hr />
+<p><br /></p>
+
+<h2 id="3-ice는-어떻게-동작-할까">3. ICE는 어떻게 동작 할까?</h2>
+
+<p>ICE 과정에서 STUN, TURN 등으로 찾아낸 연결 가능한 네트워크 주소들을 <strong>Candidate</strong> / <strong>후보</strong> 라고 부르며 Candidate을 찾기
+<em>(Finding Candidate)</em> 까지 해준다.<br />
+(Finding Candidate은 <strong>동기적으로 진행</strong>된다. peer A에서 Candidate을 찾은 뒤 완료 되면 peer B 시작.<br />
+ICE의 큰 단점인 속도가 <strong>느리다는 점</strong>인데 위 부분이 원인이다. 뒤에서 다시 언급 할 예정.)<br /></p>
+
+<p>그렇다면 적절한 Candidate를 찾았다면 그 다음은 어떻게 진행 할까?</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;peer A의 흐름&gt;
+1. peer A가 로컬 SDP가 포함된 제안 생성 (create offer)
+2. RTCPeerConnection 객체에 *offer를 첨부
+3. 시그널링 서버에 offer가 포함된 RTCPeerConnection객체를 peer B에게 전송
+
+&lt;peer B의 흐름&gt;
+1. peer B는 시그널링서버로 부터 peer A의 제안을 받음
+2. peer A의 제안에 대한 답변(SDP 포함) 생성
+3. (peer A의 1번 항목과 같이) RTCPeerConnection 객체에 *answer를 첨부
+4. 시그널링 서버에 answer가 포함된 RTCPeerConnection객체를 peer A에게 전송
+</code></pre></div></div>
+<p><br />
+<strong>​ICE 동작 부분에서 SDP 라는 단어가 나왔다. 이건 뭘까?<br /></strong></p>
+<h3 id="sdp-란">SDP 란?</h3>
+
+<p>​	ICE를 통해 찾은 정보들을 서로 교환할때 사용하는 규격 <em>(Session Description Protocol)</em>	
+​	해상도나 형식, 코덱, 암호화등의 멀티미디어 컨텐츠의 연결을 설명하기 위한 표준. 
+​	<strong>미디어 컨텐츠에 대한 메타데이터.</strong></p>
+
+<p>​위 설명에 나와있지만 감이 안온다. 아래 그림으로 보면 이렇게 생겼다.<br /></p>
+
+<p><img src="https://velog.velcdn.com/images%2Fjodmsoluth%2Fpost%2F5762315c-83fe-4d84-8437-ce348c7bd836%2Fimage.png" alt="SDP" /></p>
+
+<p>​	복잡해보이지만 규칙이 있고 각 줄 마다 의미가 있다.
+​	구글링 해보면 자세하게 나와있는 자료들이 많으니 찾아보는 것을 추천.</p>
+
+<p>​	<strong>SDP는 제안/수락 모델 구조이다. (Offer / Answer)</strong>
+​	(아래 그림 첨부)
+​	<img src="https://velog.velcdn.com/images%2Fgojaegaebal%2Fpost%2Fa19b9710-b249-494a-aa30-4c6dddc0586f%2Fimage.png" alt="offer/answer" title="SDP offer/answer" /></p>
+
+<p>​	결론은 peer 간 미디어컨텐츠를 직접 전송하는 것이 아닌, 메타데이터로 표현된 문서를 연결을 위해 
+​	교환할 목적으로 만들어졌다.</p>
+
+<h3 id="trickle-ice">Trickle ICE</h3>
+
+<p><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2VF7zyJi6JVPXAMz5LtTZ6OQZgOa3h0HbDA&amp;usqp=CAU" alt="trickle ice" /></p>
+
+<p>​	<strong>Trickle ICE</strong> or <strong>ICE trickling</strong>은 <em>초기 offer 혹은 answer를 다른 유저에게 이미 전달 했음에도</em>
+​	<em>계속해서 candidate를 보내는 과정 이다.</em></p>
+
+<p>​	이미지와 같이 해석하면 물방울, 천천히 흐르는 이라는 뜻을 가지고 있다.
+​	키워드만 보면 ICE와 대치 되는 다른 방식의 ICE인가? 하고 생각 할 수 있다.
+​	먼저 이 부분은 ICE에 대한 히스토리를 간략하게나마 알아볼 필요가 있다.<br /></p>
+
+<h3 id="ice의-역사">ICE의 역사</h3>
+
+<p><a href="https://www.3cx.com/global/kr/voip-sip-webrtc/">VoIP</a> : <em>Voice Over Internet Protocol의 약자로 인터넷을 이용한 음성 전송을 뜻합니다. 이 기술은 인터넷 프로토콜(IP) 네트워크를 통해 음성 통신과 멀티미디어 세션(동영상 등)을 전달 합니다.</em></p>
+
+<p>예전에는 VoIP 방식의 프로토콜을 사용 했던것 같다.
+이런 방식은 간단하다.</p>
+
+<p>A가 B에게 전화 하려고할때 A의 IP 주소를 B에게 보내고 B가 수락하면 B의 IP로 응답 후 서로 연결하면 된다. 하지만 NAT가 도입 된 후 위의 상황은 어렵게 됨.
+기존 처럼 A와 B를 직접적으로 연결 되도록 하고싶어 STUN 방식을 생각해냄.
+자신의 ip를 알아내어 서로에게 초대 메세지를 보내는 방식. (<a href="https://www.findip.kr/">my ip address</a> 와 같은)</p>
+
+<p>그러나 NAT 정책에 따라 STUN방식이 실패 하는 경우도 발생.
+그래서 미디어 트래픽을 중계 하는 기술에 의존하게됨.
+(릴레이 관련 솔루션을 사용하거나 TURN 방식)</p>
+
+<p>또 한가지 문제는 SIP프로토콜은 제안/응답 방식.
+<strong>SIP:</strong> SIP는 요청 및 응답 모델을 따르는 HTTP 작동 방식과 비슷한 방식 (일회성) 
+<u>_(SIP 프로토콜에서 일회성(stateless)로 인해 정확이 어떤 문제인지는 저도 아직 답을 찾지 못했습니다.
+혹시 아시는 분이 계시다면 공유 해주시면 감사하겠습니다)_</u></p>
+
+<p>이후 새로운 해결책이 생김. interactive connectivity establishment 개념.
+<br />
+<em>(IETF에 의해  <a href="https://tools.ietf.org/html/rfc5245">ICE</a> 프로토콜로 표준화되었으며 그 이전에도 Skype 및 Google Talk과 같은 프로그램에서 사용되어짐)</em>
+(VoIP에서는 SIP 방식을, 이후에는 SDP 방식을 사용 하는것으로 이해 했습니다)</p>
+
+<p>다시 돌아와서 ICE를 보자.
+클라이언트에서 연결을 시도 하기 전 모든 주소들을 수집 (ip,port 정보 등)
+따라서 모든 후보자가 수집되면 우선순위에 따라 목록으로 정렬됨. (후보는 여러개가 될 수 있다.)
+(여기서 우선순위 기준은 가장 적은 오버헤드를 가진 후보)</p>
+
+<p>이후 여러개의 후보 중 그나마 안정적으로 네트워크와 통신 할 수 있는 후보를 1개로 추려
+Default 값으로 설정 후 SDP 제안에 맞게 준비를 함.</p>
+
+<p>정리하자면 클라이언트에서 ICE 연결 준비를 할때 후보들을 수집하고, 내부적으로도 STUN 바인딩 등등 여러 절차들을 실행을 함. 
+관련 작업들이 끝나면 클라이언트는 위의 종합된 결과를 원격 클라이언트에게 보내고 원격에서도
+동일한 방식 진행.</p>
+
+<p>이런 여러가지 복잡한 방식을 거쳐 ICE가 동작한다.
+계속해서 ICE에는 많은 api들이 추가가 됨. (효율성, 안정성을 위해)
+하지만 고질적인 특정 문제가 지속 됨. –&gt; ICE 과정으로 인해 <strong>속도 느림</strong></p>
+
+<blockquote>
+  <p>사람들: ICE 너무 복잡해요 ㅡ,ㅡ</p>
+
+  <p>IETF: <em>우리가 복잡한 세상에 살고 있기 때문에 ICE도 복잡 할 수 밖에 없습니다</em>.</p>
+</blockquote>
+
+<p>(위 내용은 IETF의 답변이라고 하는데 사실인지는 모르겠음..)</p>
+
+<p>그래서 ICE <a href="https://tools.ietf.org/html/rfc5245">RFC 5245</a> 는 위의 후보 정보들을 모두 기다리는 대신 후보가 조금이라도 준비 되면 바로 ICE 연결 진행을 하는 방식 권장함.</p>
+
+<p><em><a href="https://tools.ietf.org/id/draft-ietf-mmusic-trickle-ice">Trickle ICE</a> 의 컨셉은 후보의 모든 정보들이 모일때까지 기다리기 보다 발견되는 후보마다 조금씩 교환을 시작. (조금씩 흐르게)</em>
+병렬로 프로세스를 진행하기때문에 속도 향상에 상당히 도움.
+모든 클라이언트가 후보 수집을 마치면 “end-of-candidates” 신호를 보냄. 신호가 없으면 실패로 간주.</p>
+
+<p><em><u>Trickle ICE는 ICE 프로토콜의 개선 사항 중 하나 이다.</u></em></p>
+
+<hr />
+<p><br /></p>
+
+<h2 id="정리">정리</h2>
+
+<p>ICE는 두 peer 간에 통신을 할수 있도록 네트워크 최적의 경로를 찾아주는 역할.
+이 과정에서 STUN, TURN을 사용.</p>
+
+<p>데이터를 교환하기 위해 미디어콘텐츠를 메타데이터 형식으로 구현해 전송하는 규약이 있음.
+-&gt; <strong>SDP 프로토콜</strong>.</p>
+
+<p>WebRTC를 구현하면서 ICE 부분을 정확히 이해 해야 하는 것이 필수 인 것 같다.
+STUN, TURN, NAT 부분도 추후 포스팅으로 다룰 것.</p>
+
+<hr />
+<p><br /></p>
+
+<h2 id="reference">Reference</h2>
+
+<p><a href="https://webrtc.org/getting-started/peer-connections#ice_candidates">참고링크1</a></p>
+
+<p><a href="https://blog.sessionstack.com/how-javascript-works-webrtc-and-the-mechanics-of-peer-to-peer-connectivity-87cc56c1d0ab">참고링크2</a></p>
+
+<p><a href="https://webrtchacks.com/trickle-ice/">참고링크3</a></p>
+
+</div>
+            <div class="article-share">
+               
+              <a
+                href="https://twitter.com/intent/tweet?url=https://fumenoid.github.io/posts/webrtc-ice&via=fumenoid&text=WebRTC 뽀개기 - ICE 편 : ICE 프레임워크가 무엇이고 어떤 방식인지 정리 한 내용 입니다."
+                title="Share on Twitter"
+                rel="noreferrer noopener"
+                target="_blank"
+              >
+                <svg viewBox="0 0 512 512">
+                  <path
+                    d="M492 109.5c-17.4 7.7-36 12.9-55.6 15.3 20-12 35.4-31 42.6-53.6 -18.7 11.1-39.4 19.2-61.5 23.5C399.8 75.8 374.6 64 346.8 64c-53.5 0-96.8 43.4-96.8 96.9 0 7.6 0.8 15 2.5 22.1 -80.5-4-151.9-42.6-199.6-101.3 -8.3 14.3-13.1 31-13.1 48.7 0 33.6 17.2 63.3 43.2 80.7C67 210.7 52 206.3 39 199c0 0.4 0 0.8 0 1.2 0 47 33.4 86.1 77.7 95 -8.1 2.2-16.7 3.4-25.5 3.4 -6.2 0-12.3-0.6-18.2-1.8 12.3 38.5 48.1 66.5 90.5 67.3 -33.1 26-74.9 41.5-120.3 41.5 -7.8 0-15.5-0.5-23.1-1.4C62.8 432 113.7 448 168.3 448 346.6 448 444 300.3 444 172.2c0-4.2-0.1-8.4-0.3-12.5C462.6 146 479 129 492 109.5z"
+                  />
+                </svg>
+              </a>
+              <a
+                href="https://www.facebook.com/sharer/sharer.php?u=https://fumenoid.github.io/posts/webrtc-ice"
+                title="Share on Facebook"
+                rel="noreferrer noopener"
+                target="_blank"
+              >
+                <svg viewBox="0 0 512 512">
+                  <path d="M288 192v-38.1c0-17.2 3.8-25.9 30.5-25.9H352V64h-55.9c-68.5 0-91.1 31.4-91.1 85.3V192h-45v64h45v192h83V256h56.4l7.6-64H288z" />
+                </svg>
+              </a>
+            </div>
+
+            
+            <div id="disqus_thread" class="article-comments"></div>
+            <script src="https://blog.disqus.com/embed.js" async defer></script>
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+            
+          </article>
+          <footer class="footer scrollappear">
+  <!-- <p>
+    Chalk is a high quality, completely customizable, performant and 100% free
+    blog template for Jekyll built by
+    <a href="/about" title="About me">Nielsen Ramon</a>. Download it <a href="https://github.com/nielsenramon/chalk" rel="noreferrer noopener" target="_blank" title="Download Chalk">here</a>.
+  </p> -->
+</footer>
+
+        </div>
+      </div>
+    </main>
+    
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-155182197-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+  gtag("js", new Date());
+  gtag("config", "UA-155182197-2");
+</script>
+ <script src="/assets/vendor-ec04f549bf06a348280d37d309c000e0374d58d6dc12c88480223cba94221c70.js" type="text/javascript"></script>  <script src="/assets/webfonts-96493456d319d1bf419afdf8701552d4d486fee6afd304897d4fd81eb4e0cc0b.js" type="text/javascript"></script>   <script src="/assets/scrollappear-e2da8ea567e418637e31266cc5302126eaa79f62a2273739086358b589a89ee6.js" type="text/javascript"></script>  <script src="/assets/application-cfde13ac81ddaf4351b2e739603e2baf688d0fcc9aba613fe62bbb1c7b037fb9.js" type="text/javascript"></script>  <script src="/assets/themetoggle-df0d3d73164dc26dffbd630182ae4d0dfa7bee6b694a2b5d565d73595b582bbf.js" type="text/javascript"></script> 
+
+  </body>
+</html>
